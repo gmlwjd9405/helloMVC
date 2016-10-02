@@ -1,8 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,37 +13,53 @@ import model.Customer;
 import service.CustomerService;
 
 /**
- * Servlet implementation class DoLogin
+ * Servlet implementation class DoRegister
  */
-@WebServlet("/doLogin")
-public class DoLogin extends HttpServlet {
+@WebServlet("/doRegister")
+public class DoRegister extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public DoLogin() {
+	public DoRegister() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String id = request.getParameter("id");
 		String password = request.getParameter("password");
+		String name = request.getParameter("name");
+		String gender = request.getParameter("gender");
+		String email = request.getParameter("email");
 
-		// login함수 구현하기 -> id, password 가진 사용자가 있는지 확인
 		CustomerService service = (CustomerService) CustomerService.getInstance();
-		Customer customer = service.login(id, password); 
-
+		Customer customer = new Customer(id, password, name, gender, email);
+		
 		String page;
-
-		if (customer == null) {
-			page = "/view/loginFail.jsp";
+		
+		//모든 값이 입력 되지 않았으면 registerFail
+		if(id==null || password==null || name==null || gender==null || email==null){
+			page = "/view/registerFail.jsp";
 			request.setAttribute("id", id);
-		} else {
-			page = "/view/loginSuccess.jsp";
+		}
+		
+		//로그인 아이디가 중복이면 registerFail
+		else if(service.findCustomer(id) != null){
+			page = "/view/registerFail.jsp";
+			request.setAttribute("id", id);
+		}
+		
+		//모든 값이 입력 되었으면 해당하는 값들로 회원가입 registerSuccess 
+		else{
+			service.addCustomer(customer);
+			page = "/view/registerSuccess.jsp";
 			request.setAttribute("customer", customer);
 		}
 
@@ -53,4 +67,5 @@ public class DoLogin extends HttpServlet {
 		RequestDispatcher dispatcher = request.getRequestDispatcher(page);
 		dispatcher.forward(request, response);
 	}
+
 }

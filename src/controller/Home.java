@@ -15,14 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/home")
 public class Home extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public Home() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public Home() {
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -30,20 +28,24 @@ public class Home extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String action = request.getParameter("action"); // login or help
+
+		// login or register
+		String action = request.getParameter("action");
 
 		// 선택한 view Page로 이동
 		String page = null;
-		
-		if (action.equals("login")) {
-			page = "/view/loginform.jsp";
-		} else if (action.equals("help")) {
-			page = "/view/help.jsp";
-		} else {
+
+		if(action.equals("login")){
+			page = "/view/loginForm.jsp";
+		}
+		else if (action.equals("register")) {
+			page = "/view/registerForm.jsp";
+		} 
+		else {
 			page = "/view/error.jsp";
 		}
-		
-		//해당하는 page로 forward 시킴
+
+		// 해당하는 page로 forward 시킴
 		RequestDispatcher dispatcher = request.getRequestDispatcher(page);
 		dispatcher.forward(request, response);
 	}
